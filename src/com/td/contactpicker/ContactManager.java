@@ -14,7 +14,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
@@ -43,6 +45,8 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+import demo.vicshady.utils.contactpicker.R;
 
 public final class ContactManager extends SherlockFragmentActivity {
 
@@ -216,16 +220,133 @@ public final class ContactManager extends SherlockFragmentActivity {
 	};
 
 	@SuppressLint("InlinedApi")
-	private void getContacts() {
+	private void getContactsOldApi() {
+		
+		
+		Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[] { ContactsContract.Contacts._ID,
+                                        ContactsContract.Contacts.DISPLAY_NAME};
+//        String selection = null;//ContactsContract.Contacts.HAS_PHONE_NUMBER + " = '" + ("1") + "'";
+        String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER + " = '" + ("1") + "'";
+        String[] selectionArgs = null;
+        String sortOrder = ContactsContract.Contacts.DISPLAY_NAME
+                + " COLLATE LOCALIZED ASC";
+
+        ContentResolver contectResolver = getContentResolver();
+
+        Cursor cursor = contectResolver.query(uri, projection, selection, selectionArgs,
+                sortOrder);
+        Contact contact;
+        //Load contacts one by one
+        if(cursor.moveToFirst()) {
+        	while(!cursor.isAfterLast()) {
+        		contact = new Contact();
+        		String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+        		
+        		contact.setContactPhotoUri(getContactPhotoUri(Long.parseLong(id)));
+        		
+        		String[] phoneProj = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME};
+        		Cursor cursorPhone = contectResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, phoneProj,
+        				ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[] { id }, null);
+        		if(cursorPhone.moveToFirst()) {
+            		contact.setContactNumber(cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+        		}
+        		cursorPhone.close();
+        		
+        		contact.setContactName(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+        		
+        		allContacts.put(id, contact);
+        		cursor.moveToNext();
+        	}
+        }
+        cursor.close();
+        
+		
+
+//		ContentResolver cr = getContentResolver();
+//		String selection = null;//Data.HAS_PHONE_NUMBER + " = '" + ("1") + "'";
+//		
+//		Cursor cur = cr.query(Data.CONTENT_URI, new String[] { Data.CONTACT_ID, Data.MIMETYPE, Email.ADDRESS,
+//				Contacts.DISPLAY_NAME, Phone.NUMBER }, selection, null, Contacts.DISPLAY_NAME);
+//		
+//         Contact contact;
+//		if (cur.getCount() > 0) {
+////			int i = 0;
+//			while (cur.moveToNext()) {
+//
+//				String id = cur.getString(cur.getColumnIndex(Data.CONTACT_ID));
+//
+//				String mimeType = cur.getString(cur.getColumnIndex(Data.MIMETYPE));
+//				
+////				if(!TextUtils.isEmpty(cur.getString(cur.getColumnIndex(Phone.NUMBER))) && mimeType.contains(Phone.CONTENT_ITEM_TYPE))
+//					if (allContacts.containsKey(id)) {
+//						// update contact
+//						contact = allContacts.get(id);
+//					} else {
+//						contact = new Contact();
+//						allContacts.put(id, contact);
+//						// set photoUri
+//						contact.setContactPhotoUri(getContactPhotoUri(Long.parseLong(id)));
+//					}
+//
+//					if (mimeType.equals(StructuredName.CONTENT_ITEM_TYPE))
+//						// set name
+//						contact.setContactName(cur.getString(cur.getColumnIndex(Contacts.DISPLAY_NAME)));
+//
+//					if (mimeType.equals(Phone.CONTENT_ITEM_TYPE))
+//						// set phone munber
+//						contact.setContactNumber(cur.getString(cur.getColumnIndex(Phone.NUMBER)));
+//					
+////					i+=1;
+////					if(i==2 || i==1)
+////					{
+////						i=0;
+////						if(TextUtils.isEmpty(contact.getContactNumber()))
+////						{
+////						allContacts.remove(id);	
+////						}
+////					}
+//					
+////					if (mimeType.equals(Email.CONTENT_ITEM_TYPE))
+////						// set email
+////						contact.setContactEmail(cur.getString(cur.getColumnIndex(Email.ADDRESS)));
+////					}					
+//				}
+//		}
+//
+//		cur.close();
+		
+		
+		// get contacts from hashmap
+		contacts.clear();
+		contacts.addAll(allContacts.values());
+
+		// remove self contact
+		for (Contact _contact : contacts) {
+
+			if (_contact.getContactName() == null && _contact.getContactNumber() == null
+					&& _contact.getContactEmail() == null) {
+				contacts.remove(_contact);
+				break;
+			}
+		}
+
+		contactAdapter = new ContactAdapter(this, R.id.contactList, contacts);
+		contactAdapter.notifyDataSetChanged();
+
+	}
+	
+	@SuppressLint("InlinedApi")
+	private void getContactsNewApi() {
 
 		ContentResolver cr = getContentResolver();
 		String selection = Data.HAS_PHONE_NUMBER + " = '" + ("1") + "'";
-
+		
 		Cursor cur = cr.query(Data.CONTENT_URI, new String[] { Data.CONTACT_ID, Data.MIMETYPE, Email.ADDRESS,
 				Contacts.DISPLAY_NAME, Phone.NUMBER }, selection, null, Contacts.DISPLAY_NAME);
 
-		Contact contact;
-
+		
+         Contact contact;
 		if (cur.getCount() > 0) {
 
 			while (cur.moveToNext()) {
@@ -272,7 +393,6 @@ public final class ContactManager extends SherlockFragmentActivity {
 				contacts.remove(_contact);
 				break;
 			}
-
 		}
 
 		contactAdapter = new ContactAdapter(this, R.id.contactList, contacts);
@@ -299,7 +419,15 @@ public final class ContactManager extends SherlockFragmentActivity {
 		protected Void doInBackground(Void... params) {
 
 			// Obtain contacts
-			getContacts();
+			
+			if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB)
+			{
+				getContactsNewApi();	
+			}
+			else
+			{
+				getContactsOldApi();
+			}
 			return null;
 
 		}

@@ -18,7 +18,6 @@ package com.td.contactpicker;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -27,6 +26,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import demo.vicshady.utils.contactpicker.R;
 
 /**
  * User: Blaž Šolar
