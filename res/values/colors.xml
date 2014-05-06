@@ -3,5 +3,6 @@
 
     <color name="white">#FFF</color>
     <color name="transparent">#00000000</color>
+    <color name="blue_btn_bg">#01afd2</color>
 
 </resources>

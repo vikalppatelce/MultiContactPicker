@@ -54,32 +54,32 @@
             android:textColor="#7F7F7F"
             android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/emailLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/number"
-            android:layout_marginTop="6dp"
-            android:layout_toRightOf="@+id/number"
-            android:ellipsize="end"
-            android:padding="2dp"
-            android:singleLine="true"
-            android:textColor="#7F7F7F"
-            android:textSize="12sp" />
+<!--         <TextView -->
+<!--             android:id="@+id/emailLabel" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_alignBaseline="@+id/number" -->
+<!--             android:layout_marginTop="6dp" -->
+<!--             android:layout_toRightOf="@+id/number" -->
+<!--             android:ellipsize="end" -->
+<!--             android:padding="2dp" -->
+<!--             android:singleLine="true" -->
+<!--             android:textColor="#7F7F7F" -->
+<!--             android:textSize="12sp" /> -->
 
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/number"
-            android:layout_marginTop="6dp"
-            android:layout_toRightOf="@+id/emailLabel"
-            android:ellipsize="end"
-            android:padding="2dp"
-            android:singleLine="true"
-            android:text="getchanu@gmail.com"
-            android:textColor="#7F7F7F"
-            android:textSize="12sp" />
+<!--         <TextView -->
+<!--             android:id="@+id/email" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:layout_alignBaseline="@+id/number" -->
+<!--             android:layout_marginTop="6dp" -->
+<!--             android:layout_toRightOf="@+id/emailLabel" -->
+<!--             android:ellipsize="end" -->
+<!--             android:padding="2dp" -->
+<!--             android:singleLine="true" -->
+<!--             android:text="getchanu@gmail.com" -->
+<!--             android:textColor="#7F7F7F" -->
+<!--             android:textSize="12sp" /> -->
     </RelativeLayout>
 
     <CheckBox

@@ -30,13 +30,15 @@
                 android:text=""
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <com.td.contactpicker.FlowLayout
+            <demo.vicshady.contactpicker.FlowLayout
                 android:id="@+id/chips_box_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="start"
+                android:onClick="onFlowLayoutClick"
+                android:background="@drawable/edit_shape"
                  >
-            </com.td.contactpicker.FlowLayout>
+            </demo.vicshady.contactpicker.FlowLayout>
         </LinearLayout>
     </ScrollView>
 
